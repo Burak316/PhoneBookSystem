@@ -10,34 +10,81 @@ struct person *next;
 
 void addPerson(struct person **head);
 bool getPersonInput(char *name , char *phoneNumber);
+int printMenu(void);
+void clearBuffer(void);
 
-int main(){
-struct person *head=NULL;
+
+
+int main(void){
+int choice=0;
+    struct person *head=NULL;
+
+
+
+do{
+       choice=printMenu();
+        switch(choice){
+            case 1: addPerson(&head);
+            break;
+
+            case 2: listNumbers();
+            break;
+
+            case 3: deleteNumber();
+            break;
+
+            case 4: searchNumber();
+            break;
+
+            case 5: printf("Exiting...\n");
+            break;
+
+            default: printf("Invalid selection. Please try again\n");
+        }
+    }while(choice!=5);
+
+
 }
+int printMenu(void){
+    int choice=0;
+        printf("To add a new number, click 1\n");
+        printf("To list the numbers, click 2\n");
+        printf("To delete the number, click 3\n");
+        printf("To search the number, click 4\n");
+        printf("To exit, click 5\n");
 
+        if(scanf("%d",&choice)!=1){
+            printf("Please enter a valid number\n");
+            clearBuffer();
+        return 0;
+        }
+        return choice;
+}
 bool getPersonInput(char *name , char *phoneNumber){
 
 printf("Enter name: ");
 if(scanf("%99s", name) != 1){
     fprintf(stderr, "Invalid name\n");
-    return 0;
+    clearBuffer();
+    return false;
 }
 
 printf("Enter phone number: ");
 if(scanf("%19s", phoneNumber) != 1){
     fprintf(stderr, "Invalid number\n");
-    return 0;
+    clearBuffer();
+    return false;
 }
-return 1;
+return true;
 }
 
 void addPerson(struct person **head){
 struct person *newPerson=malloc(sizeof(struct person));
 if(newPerson==NULL) return;
 newPerson->next=NULL;
-int control = getPersonInput(newPerson->name, newPerson->phoneNumber);
+bool isSuccess = getPersonInput(newPerson->name, newPerson->phoneNumber);
 
-    if(!control){
+    if(!isSuccess){
     free(newPerson);
     return;
 }
@@ -60,4 +107,8 @@ int control = getPersonInput(newPerson->name, newPerson->phoneNumber);
         newPerson->next=currentPtr;
     }
 
+}
+void clearBuffer(void){
+int c;
+while((c=getchar())!='\n' && c!=EOF);
 }
