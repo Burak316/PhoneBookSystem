@@ -10,6 +10,8 @@ char phoneNumber[phoneNumber_LENGTH];
 struct person *next;
 };
 
+void saveFile(struct person *head);
+void loadFile(struct person *head);
 void addPerson(struct person **head);
 bool getPersonInput(struct person *head, char *name , char *phoneNumber);
 void listNumbers(struct person *head);
@@ -157,6 +159,21 @@ void listNumbers(struct person *head){
         printf("\t\t\t%s\t\t\t%s\n",tempPtr->name,tempPtr->phoneNumber);
         tempPtr=tempPtr->next;
     }
+}
 
 
+void saveFile(struct person *head){
+
+FILE *file=fopen("Numbers.txt","w");
+if(file==NULL){
+    fprintf(stderr,"\n\t\t\t[!] Error: Could not open file for saving!\n");
+    return;
+}
+struct person *tempPtr=head;
+while(tempPtr!=NULL){
+    fprintf(file,"\t\t\t%s\t\t\t%s\n",tempPtr->name,tempPtr->phoneNumber);
+    tempPtr=tempPtr->next;
+}
+fclose(file);
+    printf("\n\t\t\t[+] Phone book saved successfully.\n");
 }
