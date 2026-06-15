@@ -2,14 +2,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#define NAME_LENGTH 100
+#define phoneNumber_LENGTH 20
 struct person{
-char name[100];
-char phoneNumber[20];
+char name[NAME_LENGTH];
+char phoneNumber[phoneNumber_LENGTH];
 struct person *next;
 };
 
 void addPerson(struct person **head);
-bool getPersonInput(char *name , char *phoneNumber);
+bool getPersonInput(struct person *head, char *name , char *phoneNumber);
 int printMenu(void);
 void clearBuffer(void);
 
@@ -18,7 +20,7 @@ void clearBuffer(void);
 int main(void){
 int choice=0;
     struct person *head=NULL;
-
+    
 
 
 do{
@@ -43,15 +45,20 @@ do{
         }
     }while(choice!=5);
 
-
+ return 0;
 }
 int printMenu(void){
     int choice=0;
-        printf("To add a new number, click 1\n");
-        printf("To list the numbers, click 2\n");
-        printf("To delete the number, click 3\n");
-        printf("To search the number, click 4\n");
-        printf("To exit, click 5\n");
+        printf("\t\t\t=================================================\n");
+        printf("\t\t\t*               PHONE BOOK SYSTEM \t\t*\n");
+        printf("\t\t\t*           1-To add a new number \t\t*\n");
+        printf("\t\t\t*           2-To list the numbers \t\t*\n");
+        printf("\t\t\t*           3-To delete the number\t\t*\n");
+        printf("\t\t\t*           4-To search the number\t\t*\n");
+        printf("\t\t\t*           5-To exit             \t\t*\n");
+        
+        printf("\t\t\t=================================================\n");
+        
 
         if(scanf("%d",&choice)!=1){
             printf("Please enter a valid number\n");
@@ -60,21 +67,45 @@ int printMenu(void){
         }
         return choice;
 }
-bool getPersonInput(char *name , char *phoneNumber){
+bool getPersonInput(struct person *head,char *name , char *phoneNumber){
 
 printf("Enter name: ");
-if(scanf("%99s", name) != 1){
-    fprintf(stderr, "Invalid name\n");
-    clearBuffer();
+char tempName[NAME_LENGTH];
+clearBuffer();
+fgets(tempName,sizeof(tempName),stdin);
+tempName[strcspn(tempName, "\n")]='\0';
+if(tempName[0]=='\0'){
+    fprintf(stderr,"Name can not be empty");
     return false;
 }
 
+struct person *tempPtr=head;
+while(tempPtr!=NULL){
+    if(strcmp(tempPtr->name, tempName)==0){
+         fprintf(stderr, "Warning: %s already exists. Rejected!\n", tempName);
+         return false;
+    }
+    tempPtr=tempPtr->next;
+}
 printf("Enter phone number: ");
-if(scanf("%19s", phoneNumber) != 1){
-    fprintf(stderr, "Invalid number\n");
-    clearBuffer();
+char tempPhoneNumber[phoneNumber_LENGTH];
+
+fgets(tempPhoneNumber,sizeof(tempPhoneNumber),stdin);
+tempPhoneNumber[strcspn(tempPhoneNumber, "\n")]='\0';
+if(tempPhoneNumber[0]=='\0'){
+    fprintf(stderr,"Phone number can not be empty");
     return false;
 }
+tempPtr=head;
+while(tempPtr!=NULL){
+    if(strcmp(tempPtr->phoneNumber, tempPhoneNumber)==0){
+         fprintf(stderr, "Warning: %s already exists. Rejected!\n", tempPhoneNumber);
+         return false;
+    }
+    tempPtr=tempPtr->next;
+}
+strcpy(name, tempName);
+strcpy(phoneNumber, tempPhoneNumber);
 return true;
 }
 
@@ -82,7 +113,7 @@ void addPerson(struct person **head){
 struct person *newPerson=malloc(sizeof(struct person));
 if(newPerson==NULL) return;
 newPerson->next=NULL;
-bool isSuccess = getPersonInput(newPerson->name, newPerson->phoneNumber);
+bool isSuccess = getPersonInput(*head,newPerson->name, newPerson->phoneNumber);
 
     if(!isSuccess){
     free(newPerson);
