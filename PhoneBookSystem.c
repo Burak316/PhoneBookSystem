@@ -28,13 +28,13 @@ do{
             case 1: addPerson(&head);
             break;
 
-            case 2: listNumbers();
+            case 2: //listNumbers();
             break;
 
-            case 3: deleteNumber();
+            case 3: //deleteNumber();
             break;
 
-            case 4: searchNumber();
+            case 4: //searchNumber();
             break;
 
             case 5: printf("Exiting...\n");
