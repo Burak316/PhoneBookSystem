@@ -9,7 +9,6 @@ char name[NAME_LENGTH];
 char phoneNumber[phoneNumber_LENGTH];
 struct person *next;
 };
-
 void addPerson(struct person **head);
 bool getPersonInput(struct person *head, char *name , char *phoneNumber);
 int printMenu(void);
