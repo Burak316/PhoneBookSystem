@@ -9,8 +9,12 @@ char name[NAME_LENGTH];
 char phoneNumber[phoneNumber_LENGTH];
 struct person *next;
 };
+
 void addPerson(struct person **head);
 bool getPersonInput(struct person *head, char *name , char *phoneNumber);
+void listNumbers(struct person *head);
+void deleteNumber(struct person **head);
+void searchNumber(struct person *head);
 int printMenu(void);
 void clearBuffer(void);
 
@@ -28,13 +32,13 @@ do{
             case 1: addPerson(&head);
             break;
 
-            case 2: //listNumbers();
+            case 2: listNumbers(head);
             break;
 
-            case 3: //deleteNumber();
+            case 3: deleteNumber(&head);
             break;
 
-            case 4: //searchNumber();
+            case 4: searchNumber(head);
             break;
 
             case 5: printf("Exiting...\n");
@@ -55,10 +59,8 @@ int printMenu(void){
         printf("\t\t\t*           3-To delete the number\t\t*\n");
         printf("\t\t\t*           4-To search the number\t\t*\n");
         printf("\t\t\t*           5-To exit             \t\t*\n");
-        
         printf("\t\t\t=================================================\n");
         
-
         if(scanf("%d",&choice)!=1){
             printf("Please enter a valid number\n");
             clearBuffer();
@@ -138,7 +140,23 @@ bool isSuccess = getPersonInput(*head,newPerson->name, newPerson->phoneNumber);
     }
 
 }
+
+
 void clearBuffer(void){
 int c;
 while((c=getchar())!='\n' && c!=EOF);
+}
+
+
+
+void listNumbers(struct person *head){
+    printf("\t\t\tName\t\t\tPhone Number\n");
+    printf("\t\t\t----\t\t\t------------\n");
+    struct person *tempPtr=head;
+    while(tempPtr!=NULL){
+        printf("\t\t\t%s\t\t\t%s\n",tempPtr->name,tempPtr->phoneNumber);
+        tempPtr=tempPtr->next;
+    }
+
+
 }
