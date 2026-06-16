@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #define NAME_LENGTH 100
 #define phoneNumber_LENGTH 20
+#define FILE_NAME "numbers.txt"
 struct person{
 char name[NAME_LENGTH];
 char phoneNumber[phoneNumber_LENGTH];
@@ -11,7 +12,7 @@ struct person *next;
 };
 
 void saveFile(struct person *head);
-void loadFile(struct person *head);
+void loadFile(struct person **head);
 void addPerson(struct person **head);
 bool getPersonInput(struct person *head, char *name , char *phoneNumber);
 void listNumbers(struct person *head);
@@ -26,7 +27,7 @@ int main(void){
 int choice=0;
     struct person *head=NULL;
     
-
+loadFile(&head);
 
 do{
        choice=printMenu();
@@ -37,13 +38,14 @@ do{
             case 2: listNumbers(head);
             break;
 
-            case 3: deleteNumber(&head);
+            case 3: //deleteNumber(&head);
             break;
 
-            case 4: searchNumber(head);
+            case 4: //searchNumber(head);
             break;
 
             case 5: printf("Exiting...\n");
+                    saveFile(head);
             break;
 
             default: printf("Invalid selection. Please try again\n");
@@ -140,7 +142,7 @@ bool isSuccess = getPersonInput(*head,newPerson->name, newPerson->phoneNumber);
         previousPtr->next=newPerson;
         newPerson->next=currentPtr;
     }
-
+    saveFile(*head);
 }
 
 
@@ -152,8 +154,8 @@ while((c=getchar())!='\n' && c!=EOF);
 
 
 void listNumbers(struct person *head){
-    printf("\t\t\tName\t\t\tPhone Number\n");
-    printf("\t\t\t----\t\t\t------------\n");
+    printf("\t\t\tName\t\t\t\tPhone Number\n");
+    printf("\t\t\t----\t\t\t\t------------\n");
     struct person *tempPtr=head;
     while(tempPtr!=NULL){
         printf("\t\t\t%s\t\t\t%s\n",tempPtr->name,tempPtr->phoneNumber);
@@ -164,16 +166,62 @@ void listNumbers(struct person *head){
 
 void saveFile(struct person *head){
 
-FILE *file=fopen("Numbers.txt","w");
+FILE *file=fopen(FILE_NAME,"w");
 if(file==NULL){
-    fprintf(stderr,"\n\t\t\t[!] Error: Could not open file for saving!\n");
+    fprintf(stderr,"\n\t\t\t Error: Could not open file for saving!\n");
     return;
 }
 struct person *tempPtr=head;
 while(tempPtr!=NULL){
-    fprintf(file,"\t\t\t%s\t\t\t%s\n",tempPtr->name,tempPtr->phoneNumber);
+    fprintf(file,"%s\n%s\n",tempPtr->name,tempPtr->phoneNumber);
     tempPtr=tempPtr->next;
 }
 fclose(file);
-    printf("\n\t\t\t[+] Phone book saved successfully.\n");
+    printf("\n\t\t\t Phone book saved successfully.\n");
+}
+
+
+
+void loadFile(struct person **head){
+
+FILE *file=fopen(FILE_NAME,"r");
+if(file==NULL){
+    fprintf(stderr, "\t\t\t Error: Could not open file for loading!\n");
+    return;
+}
+struct person *tail=NULL;
+while(1){
+    char tempName[NAME_LENGTH];
+    if(fgets(tempName,sizeof(tempName),file)==NULL){
+        printf("File is empty\n");
+        break;
+    }
+    tempName[strcspn(tempName,"\n")]='\0';
+    char tempNumber[phoneNumber_LENGTH];
+    if(fgets(tempNumber,sizeof(tempNumber),file)==NULL){
+        printf("File is broken\n");
+        break;
+    }
+    tempNumber[strcspn(tempNumber,"\n")]='\0';
+    struct person *newPtr=malloc(sizeof(struct person));
+    if(newPtr==NULL){
+        fprintf(stderr, "Memory is full!");
+        fclose(file);
+        return;
+    }
+    newPtr->next=NULL;
+    strcpy(newPtr->name, tempName);
+    strcpy(newPtr->phoneNumber, tempNumber);
+    
+    if(*head==NULL){
+        *head=newPtr;
+        tail=newPtr;
+    }
+    else{
+        tail->next=newPtr;
+        tail=newPtr;
+    }
+}
+fclose(file);
+printf("\t\t\tPhone book loaded successfully.\n");
 }
